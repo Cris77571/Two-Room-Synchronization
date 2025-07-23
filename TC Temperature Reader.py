@@ -17,6 +17,7 @@ import time
 import csv
 from datetime import datetime
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from mcculw import ul
 from mcculw.enums import TempScale
 from mcculw.device_info import DaqDeviceInfo
@@ -51,9 +52,11 @@ def Two_Room_Thermo_Sync():
             raise Exception('Error: The DAQ device does not support '
                             'temperature input')
         
-        channels = [0,1,3,6,22,23,24,29,30,31]
+        
+        #channels = list(range(64)) # For future use when 50 channels are used
+        channels = [0,1,2,4,16,17,18,20,27,29,30,31]
         samples = 1 # seconds
-        total_time = 21600 # seconds ( Still need to convert to hours)
+        total_time = 21600 # seconds ( Still need to convert to hours), see line 85
         readings = total_time // samples
 
         # Lists to store time and temperatures
@@ -64,16 +67,18 @@ def Two_Room_Thermo_Sync():
         plt.ion()
         fig, ax = plt.subplots()
         lines = {}
-        colors = ['b','g','r','c','m','y','k']
+        colormap = cm.get_cmap('tab20', 12) # Need to change amout of colors for 64 channels later
+        colors = [colormap(i) for i in range(12)] # Need to change range later
+        #colors = ['b','g','r','c','m','y','k','orange','brown','hotpink']
 
         # Setup for each channel to be plotted
         for idx, ch in enumerate(channels):
-            line, = ax.plot([], [], label=f"Channel {ch}", color=colors[idx % len(colors)])
+            line, = ax.plot([], [], label=f"Channel {ch}", color=colors[idx])
             lines[ch] = line
 
-        ax.set_title("Real-Time Temperature of Two-Room (\u00b0F)")
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Temperature")
+        ax.set_title("Temperatures of Two-Room (One Heater) (\u00b0F)")
+        ax.set_xlabel("Time (Hours)")
+        ax.set_ylabel("Temperature (\u00b0F)")
         ax.grid(True)
         ax.legend()
 
@@ -82,7 +87,7 @@ def Two_Room_Thermo_Sync():
         # For loop to start collecting the data and timestamp it
         for i in range(readings):
             current_time = time.time() - start_time
-            timestamps.append(current_time)
+            timestamps.append(current_time / 3600) # divide by 3600 to convert to hours
 
             print(f"\nReading {i+1}/{readings} at {current_time:.1f} seconds:")
 
