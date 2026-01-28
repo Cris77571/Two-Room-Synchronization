@@ -405,9 +405,9 @@ async def Two_Room_Thermo_Sync():
 
 def send_email_alert(channel, temp):
     try:
-        from_email = "" # Try it with your own email
-        from_pw = ''
-        to_email = '' # Desired Email, use GMAIL, the only one I've seen that doesn't send to junk
+        from_email = "criststest10@gmail.com"
+        from_pw = 'yjqh wmed vopt ppcy'
+        to_email = 'crishdez00@gmail.com'
         subject = f"High Temp Alert on Channel {channel}!"
         body = (f"Warning!\n\n"
                 f"Channel {channel} has exceeded the safe temperature limit.\n"
@@ -434,3 +434,4 @@ def send_email_alert(channel, temp):
 
 if __name__ == '__main__':
     asyncio.run(Two_Room_Thermo_Sync())
+
